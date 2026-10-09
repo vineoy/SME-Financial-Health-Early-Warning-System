@@ -7,7 +7,7 @@ export function TrendChart({ data }: { data: { risk_score: number; created_at: s
     t: new Date(d.created_at).toLocaleDateString(),
     risk: +(d.risk_score * 100).toFixed(1),
   }));
-  if (rows.length < 1) return <p className="text-sm text-gray-500">No assessments yet — add the first one.</p>;
+  if (rows.length < 1) return <p className="text-sm text-gray-500">No assessments yet. Add the first one.</p>;
   return (
     <ResponsiveContainer width="100%" height={220}>
       <LineChart data={rows}>

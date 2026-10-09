@@ -49,7 +49,7 @@ function DetailInner() {
             </div>
           </div>
           <div className="mt-3"><SignalExplainer score={last.risk_score} band={last.risk_band} /></div>
-          <h2 className="mt-6 font-semibold">Risk trend — your early warning</h2>
+          <h2 className="mt-6 font-semibold">Risk trend: your early warning</h2>
           <div className="mt-2 rounded-xl border p-4"><TrendChart data={rows} /></div>
           <div className="mt-3"><TrendExplainer rows={rows} /></div>
           <h2 className="mt-6 font-semibold">Why this score</h2>

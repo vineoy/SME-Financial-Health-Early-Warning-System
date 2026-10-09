@@ -28,18 +28,18 @@ export function SignalExplainer({ score, band }: { score: number; band: Band }) 
 export function TrendExplainer({ rows }: { rows: { risk_score: number }[] }) {
   let msg: string;
   if (rows.length < 2) {
-    msg = "This is your first check-up — your starting point. Add one every 3 months. The line's direction is your real early warning: going up = getting riskier, going down = improving.";
+    msg = "This is your first checkup. Your starting point. Add one every 3 months. The line direction is your real early warning: going up means getting riskier, going down means improving.";
   } else {
     const delta = (rows[rows.length - 1].risk_score - rows[0].risk_score) * 100;
-    if (delta > 5) msg = `Your risk rose ${delta.toFixed(1)} points since the first check-up — things are getting riskier. Act before it crosses the next dashed line.`;
-    else if (delta < -5) msg = `Your risk fell ${Math.abs(delta).toFixed(1)} points — what you're doing is working. Keep it up.`;
-    else msg = "Your risk is almost flat — stable. Keep checking every quarter to catch any turn early.";
+    if (delta > 5) msg = `Your risk rose ${delta.toFixed(1)} points since the first checkup. Things are getting riskier. Act before it crosses the next dashed line.`;
+    else if (delta < -5) msg = `Your risk fell ${Math.abs(delta).toFixed(1)} points. What you are doing is working. Keep it up.`;
+    else msg = "Your risk is almost flat. Stable. Keep checking every quarter to catch any turn early.";
   }
   return (
     <div className="rounded-xl border border-dashed p-4 text-sm">
       <p className="font-semibold">📈 How to read this graph?</p>
       <p className="mt-1 text-gray-700">
-        Each dot = one check-up. Dashed lines = danger levels (20%, 50%, 75%). {msg}
+        Each dot is one checkup. Dashed lines are danger levels (20%, 50%, 75%). {msg}
       </p>
     </div>
   );

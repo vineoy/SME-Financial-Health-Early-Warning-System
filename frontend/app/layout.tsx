@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SME Financial Health & Early-Warning",
+  title: "SME Financial Health and Early Warning",
   description: "Bankruptcy risk scoring and early warnings for SMEs",
 };
 

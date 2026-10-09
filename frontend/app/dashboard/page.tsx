@@ -50,7 +50,7 @@ export default function Dashboard() {
             </div>
           </div>
         ))}
-        {cos.length === 0 && <p className="text-sm text-gray-500">No companies yet — add your first above.</p>}
+        {cos.length === 0 && <p className="text-sm text-gray-500">No companies yet. Add your first above.</p>}
       </div>
     </main>
   );

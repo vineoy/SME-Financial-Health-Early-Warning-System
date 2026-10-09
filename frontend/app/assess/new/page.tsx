@@ -96,7 +96,7 @@ function AssessInner() {
     const errs: string[] = [];
     const known = new Set(FIELDS.map((f) => f.key));
     for (const h of headers) if (!known.has(h)) errs.push(`Unknown column ignored: ${h}`);
-    for (const k of REQUIRED_KEYS) if (!headers.includes(k)) errs.push(`Missing REQUIRED column: ${k} — predictions will be rejected without it.`);
+    for (const k of REQUIRED_KEYS) if (!headers.includes(k)) errs.push(`Missing REQUIRED column: ${k}. Predictions will be rejected without it.`);
     const rows: Record<string, string>[] = [];
     for (let i = 1; i < lines.length; i++) {
       if (lines[i].trim() === "") continue;
@@ -161,7 +161,7 @@ function AssessInner() {
           <div className="mt-2 h-2 overflow-hidden rounded bg-gray-200">
             <div className="h-full bg-black" style={{ width: `${coverage}%` }} />
           </div>
-          <p className="mt-1 text-xs text-gray-500">Coverage {coverage}% — fill as many as you can; required fields are marked *.</p>
+          <p className="mt-1 text-xs text-gray-500">Coverage {coverage}%. Fill as many as you can; required fields are marked *.</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {FIELDS.filter((f) => f.step === step + 1).map((f) => (
               <label key={f.key} className="block rounded-lg border p-3">
@@ -191,7 +191,7 @@ function AssessInner() {
           )}
           {csvRows.length > 0 && (
             <div className="mt-3">
-              <p className="text-sm">{csvRows.length} valid row(s) — each becomes one assessment (e.g. one per quarter).</p>
+              <p className="text-sm">{csvRows.length} valid row(s). Each becomes one assessment (for example one per quarter).</p>
               <button onClick={submitCsv} disabled={busy} className="mt-2 rounded-lg bg-black px-4 py-2 text-sm text-white disabled:opacity-50">{busy ? "Scoring…" : `Score ${csvRows.length} row(s)`}</button>
             </div>
           )}
@@ -223,9 +223,9 @@ function AssessInner() {
       )}
 
       <section className="mt-10 rounded-xl border p-5">
-        <h2 className="text-lg font-bold">📋 CSV format guide — fields for the best outcome</h2>
+        <h2 className="text-lg font-bold">📋 CSV format guide: fields for the best outcome</h2>
         <p className="mt-1 text-sm text-gray-600">
-          One row = one period (e.g. one quarter). <b>All values in Rs (plain numbers, no commas).</b> Column names must match exactly —{" "}
+          One row is one period (for example one quarter). <b>All values in Rs (plain numbers, no commas).</b> Column names must match exactly.{" "}
           <a href="/sample.csv" download className="underline">download sample.csv</a> as a template.
         </p>
         <div className="mt-3 overflow-x-auto">
@@ -237,16 +237,16 @@ function AssessInner() {
                   <td className="py-2 font-mono text-xs">{f.key}</td>
                   <td className="py-2 text-gray-600">{f.help}</td>
                   <td className="py-2">{f.required ? <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">Required</span> : <span className="rounded bg-gray-100 px-2 py-0.5 text-xs">Optional</span>}</td>
-                  <td className="py-2 text-xs text-gray-500">{["cash", "interest_bearing_debt", "operating_cash_flow", "interest_expense", "equity", "retained_earnings"].includes(f.key) ? "⭐ High impact" : "—"}</td>
+                  <td className="py-2 text-xs text-gray-500">{["cash", "interest_bearing_debt", "operating_cash_flow", "interest_expense", "equity", "retained_earnings"].includes(f.key) ? "⭐ High impact" : "·"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-gray-600">
-          <li><b>6 required columns</b> (revenue, total_income, total_expenses, total_assets, equity, paid_in_capital) — rows missing them are rejected, not guessed.</li>
-          <li><b>⭐ High-impact optionals</b> — cash, interest-bearing debt, operating cash flow, interest expense: fill these for the most accurate score.</li>
-          <li><b>Leave 0 / blank</b> only for inventory (services), contingent liabilities (none), interest expense (debt-free).</li>
+          <li><b>6 required columns</b> (revenue, total_income, total_expenses, total_assets, equity, paid_in_capital). Rows missing them are rejected, not guessed.</li>
+          <li><b>⭐ High impact optionals</b>: cash, interest bearing debt, operating cash flow, interest expense: fill these for the most accurate score.</li>
+          <li><b>Leave 0 / blank</b> only for inventory (services), contingent liabilities (none), interest expense (debt free).</li>
           <li>Best outcome = all 24 columns filled → coverage 100%. Minimum useful ≈ 18+ columns.</li>
         </ul>
       </section>

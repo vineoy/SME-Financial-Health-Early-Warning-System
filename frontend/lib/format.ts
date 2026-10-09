@@ -1,7 +1,7 @@
 export const BAND = {
   green: { label: "Healthy", color: "#16a34a", bg: "#dcfce7" },
   yellow: { label: "Watch", color: "#a16207", bg: "#fef9c3" },
-  orange: { label: "At-Risk", color: "#c2410c", bg: "#ffedd5" },
+  orange: { label: "At Risk", color: "#c2410c", bg: "#ffedd5" },
   red: { label: "Critical", color: "#dc2626", bg: "#fee2e2" },
 } as const;
 
