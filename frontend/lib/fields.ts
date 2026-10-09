@@ -38,3 +38,16 @@ export const FIELDS: FieldDef[] = [
 export const REQUIRED_KEYS = FIELDS.filter((f) => f.required).map((f) => f.key);
 
 export const CSV_HEADERS = FIELDS.map((f) => f.key).join(",");
+
+// "10,00,000" / " 5000 " -> 1000000. Returns null when empty or not a number.
+export function cleanNumber(raw: string | number | null | undefined): number | null {
+  if (raw === null || raw === undefined) return null;
+  const s = String(raw).replace(/[,_\s]/g, "");
+  if (s === "" || s === "-" || s === ".") return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : NaN as unknown as null;
+}
+
+export function labelOf(key: string): string {
+  return FIELDS.find((f) => f.key === key)?.label || key;
+}

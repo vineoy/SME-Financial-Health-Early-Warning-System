@@ -3,7 +3,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { FIELDS, REQUIRED_KEYS } from "@/lib/fields";
+import { FIELDS, REQUIRED_KEYS, cleanNumber, labelOf } from "@/lib/fields";
 import { Gauge, BandBadge, FactorBars } from "@/components/viz";
 import type { Band } from "@/lib/format";
 
@@ -42,23 +42,48 @@ function AssessInner() {
   }, [vals, mode]);
   const coverage = Math.round((filled / FIELDS.length) * 100);
 
+  // Returns payload + list of human-readable problems (empty = valid).
   const toPayload = (row: Record<string, string | number>) => {
-    const p: Record<string, number> = {};
+    const p: Record<string, number | null> = {};
+    const problems: string[] = [];
     for (const f of FIELDS) {
-      const v = row[f.key];
-      p[f.key] = v === "" || v === undefined || v === null ? 0 : Number(v);
+      const raw = row[f.key];
+      if (raw === "" || raw === undefined || raw === null) {
+        // interest_bearing_debt left blank -> backend's safer default (total liabilities)
+        p[f.key] = f.key === "interest_bearing_debt" ? null : 0;
+        continue;
+      }
+      const n = cleanNumber(raw);
+      if (n === null || Number.isNaN(n)) {
+        problems.push(`${f.label}: "${raw}" is not a number (remove commas/letters)`);
+        p[f.key] = 0;
+      } else {
+        p[f.key] = n;
+      }
     }
-    return p;
+    return { payload: p, problems };
+  };
+
+  const checkRequired = (p: Record<string, number | null>) => {
+    const missing: string[] = [];
+    for (const k of REQUIRED_KEYS) {
+      const v = p[k];
+      if (v === null || v === undefined || v <= 0) missing.push(`${labelOf(k)} must be > 0`);
+    }
+    return missing;
   };
 
   const submitManual = async () => {
     setErr(""); setRes(null);
-    for (const k of REQUIRED_KEYS) {
-      if (!vals[k] || Number(vals[k]) <= 0) { setErr(`Required field missing or ≤ 0: ${k}`); return; }
+    const { payload, problems } = toPayload(vals);
+    const missing = checkRequired(payload);
+    if (problems.length > 0 || missing.length > 0) {
+      setErr([...missing, ...problems].join("; "));
+      return;
     }
     if (!cid) { setErr("Select a company first."); return; }
     setBusy(true);
-    try { setRes(await api.predict(cid, toPayload(vals))); }
+    try { setRes(await api.predict(cid, payload)); }
     catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
   };
 
@@ -73,12 +98,21 @@ function AssessInner() {
     for (const k of REQUIRED_KEYS) if (!headers.includes(k)) errs.push(`Missing REQUIRED column: ${k} — predictions will be rejected without it.`);
     const rows: Record<string, string>[] = [];
     for (let i = 1; i < lines.length; i++) {
+      if (lines[i].trim() === "") continue;
       const cells = lines[i].split(",");
       const row: Record<string, string> = {};
       headers.forEach((h, j) => { if (known.has(h)) row[h] = (cells[j] || "").trim(); });
       const bad: string[] = [];
-      for (const k of REQUIRED_KEYS) if (!row[k] || Number(row[k]) <= 0) bad.push(k);
+      for (const k of REQUIRED_KEYS) {
+        const n = cleanNumber(row[k]);
+        if (n === null || Number.isNaN(n) || n <= 0) bad.push(labelOf(k));
+      }
+      const notNum = FIELDS.filter((f) => {
+        const v = row[f.key];
+        return v !== undefined && v !== "" && Number.isNaN(cleanNumber(v));
+      }).map((f) => f.label);
       if (bad.length > 0) errs.push(`Row ${i}: missing/invalid required: ${bad.join(", ")}`);
+      else if (notNum.length > 0) errs.push(`Row ${i}: not numbers: ${notNum.join(", ")}`);
       else rows.push(row);
     }
     setCsvErr(errs); setCsvRows(rows);
@@ -87,10 +121,10 @@ function AssessInner() {
   const submitCsv = async () => {
     if (!cid) { setErr("Select a company first."); return; }
     if (csvRows.length === 0) { setErr("No valid rows to submit."); return; }
-    setBusy(true); setRes(null);
+    setBusy(true); setRes(null); setErr("");
     try {
       let last: Result | null = null;
-      for (const row of csvRows) last = await api.predict(cid, toPayload(row));
+      for (const row of csvRows) last = await api.predict(cid, toPayload(row).payload);
       setRes(last);
     } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
   };
