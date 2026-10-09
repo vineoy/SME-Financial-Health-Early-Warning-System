@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { FIELDS, REQUIRED_KEYS, cleanNumber, labelOf } from "@/lib/fields";
 import { Gauge, BandBadge, FactorBars } from "@/components/viz";
+import { SignalExplainer } from "@/components/explain";
 import type { Band } from "@/lib/format";
 
 const STEPS = ["Revenue & Profit", "Assets & Cash", "Liabilities & Debt"];
@@ -214,6 +215,7 @@ function AssessInner() {
               {res.warnings.map((w, i) => <p key={i}>⚠ {w}</p>)}
             </div>
           )}
+          <div className="mt-4"><SignalExplainer score={res.risk_score} band={res.risk_band} /></div>
           <h3 className="mt-4 font-semibold">Why this score (top factors)</h3>
           <div className="mt-2"><FactorBars factors={res.top_factors} /></div>
           <button onClick={() => r.push(`/companies/${cid}`)} className="mt-3 text-sm underline">View trend →</button>

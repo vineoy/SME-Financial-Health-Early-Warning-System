@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { Gauge, BandBadge, FactorBars } from "@/components/viz";
+import { SignalExplainer, TrendExplainer } from "@/components/explain";
 import { TrendChart } from "@/components/trend";
 import type { Band } from "@/lib/format";
 
@@ -47,8 +48,10 @@ function DetailInner() {
               </p>
             </div>
           </div>
+          <div className="mt-3"><SignalExplainer score={last.risk_score} band={last.risk_band} /></div>
           <h2 className="mt-6 font-semibold">Risk trend — your early warning</h2>
           <div className="mt-2 rounded-xl border p-4"><TrendChart data={rows} /></div>
+          <div className="mt-3"><TrendExplainer rows={rows} /></div>
           <h2 className="mt-6 font-semibold">Why this score</h2>
           <div className="mt-2"><FactorBars factors={last.top_factors} /></div>
           <h2 className="mt-6 font-semibold">History</h2>
