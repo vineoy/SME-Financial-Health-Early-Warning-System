@@ -1,0 +1,8 @@
+{
+ "n_features": 40,
+ "roc_auc": 0.9494,
+ "pr_auc": 0.4374,
+ "accuracy_at_035": 0.9692,
+ "threshold_default": 0.18,
+ "model": "xgb800_calibrated_isotonic"
+}
