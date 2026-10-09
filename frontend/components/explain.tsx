@@ -1,5 +1,5 @@
 "use client";
-import { BAND, Band, pct } from "@/lib/format";
+import { BAND, Band } from "@/lib/format";
 
 const ADVICE: Record<Band, string> = {
   green: "No action needed. Check again next quarter to make sure it stays here.",
@@ -11,13 +11,15 @@ const ADVICE: Record<Band, string> = {
 // Plain-words signal explanation: "Out of 100 companies like yours, ~N face bankruptcy."
 export function SignalExplainer({ score, band }: { score: number; band: Band }) {
   const perHundred = Math.max(1, Math.round(score * 100));
+  const healthy = 100 - perHundred;
   return (
     <div className="rounded-xl border border-dashed p-4 text-sm">
       <p className="font-semibold">💡 What does this mean in simple words?</p>
       <p className="mt-1 text-gray-700">
         Out of <b>100 companies</b> with finances like yours, about <b>{perHundred}</b>{" "}
-        {perHundred === 1 ? "would face" : "would face"} bankruptcy. Your status is{" "}
-        <b style={{ color: BAND[band].color }}>{BAND[band].label} ({pct(score)})</b>.
+        would face bankruptcy and about <b>{healthy} stay healthy</b>. Your health is{" "}
+        <b style={{ color: BAND[band].color }}>{healthy}%</b> and your status is{" "}
+        <b style={{ color: BAND[band].color }}>{BAND[band].label}</b>.
       </p>
       <p className="mt-1 text-gray-700">👉 {ADVICE[band]}</p>
     </div>

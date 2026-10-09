@@ -9,7 +9,7 @@ import { TrendChart } from "@/components/trend";
 import type { Band } from "@/lib/format";
 
 type A = {
-  id: string; risk_score: number; risk_band: Band; created_at: string;
+  id: string; risk_score: number; risk_band: Band; health_score: number; created_at: string;
   top_factors: { feature: string; plain: string; value: number; pushes_risk_up: boolean }[];
 };
 
@@ -44,7 +44,7 @@ function DetailInner() {
             <div>
               <BandBadge band={last.risk_band} score={last.risk_score} />
               <p className="mt-2 text-sm text-gray-600">
-                Assessed {new Date(last.created_at).toLocaleString()} · {rows.length} assessment(s) total
+                Health: <b>{last.health_score}%</b> · Assessed {new Date(last.created_at).toLocaleString()} · {rows.length} assessment(s) total
               </p>
             </div>
           </div>

@@ -61,8 +61,9 @@ def predict(feat: dict):
     import pandas as pd
     X = pd.DataFrame([{k: feat.get(k, 0.0) for k in FEATS}])
     score = float(MODEL.predict_proba(X)[0, 1])
+    risk_pct = round(score * 100, 1)
     return {"risk_score": round(score, 4), "risk_band": band(score),
-            "health_score": round(100 * (1 - score), 1),
+            "health_score": round(100 - risk_pct, 1),
             "top_factors": explain(feat), "model_version": "v1"}
 
 def warnings(raw: dict, score: float):

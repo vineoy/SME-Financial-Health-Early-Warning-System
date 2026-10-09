@@ -51,4 +51,5 @@ def predict_company(cid: str, body: RawSMEInput, db: Session = Depends(get_db), 
 def history(cid: str, db: Session = Depends(get_db), user_id: str = Depends(uid)):
     rows = db.query(Assessment).filter(Assessment.company_id == cid).order_by(Assessment.created_at).all()
     return [{"id": r.id, "risk_score": r.risk_score, "risk_band": r.risk_band,
+             "health_score": round(100 - round(r.risk_score * 100, 1), 1),
              "created_at": r.created_at.isoformat(), "top_factors": r.top_factors} for r in rows]
