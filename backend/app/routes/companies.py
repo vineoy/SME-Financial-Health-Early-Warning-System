@@ -14,6 +14,17 @@ def uid(authorization: str = Header("")) -> str:
     if not u: raise HTTPException(401, "login required")
     return u
 
+@router.get("")
+def list_companies(db: Session = Depends(get_db), user_id: str = Depends(uid)):
+    comps = db.query(Company).filter(Company.user_id == user_id).order_by(Company.created_at.desc()).all()
+    out = []
+    for c in comps:
+        last = db.query(Assessment).filter(Assessment.company_id == c.id).order_by(Assessment.created_at.desc()).first()
+        out.append({"id": c.id, "name": c.name, "sector": c.sector,
+                    "latest": {"risk_score": last.risk_score, "risk_band": last.risk_band,
+                               "created_at": last.created_at.isoformat()} if last else None})
+    return out
+
 @router.post("")
 def create_company(body: CompanyIn, db: Session = Depends(get_db), user_id: str = Depends(uid)):
     c = Company(user_id=user_id, name=body.name, sector=body.sector, employee_count=body.employee_count)

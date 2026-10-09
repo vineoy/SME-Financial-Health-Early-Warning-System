@@ -1,0 +1,2 @@
+revenue,total_income,total_expenses,operating_income,operating_expenses,net_income,continuous_net_income,pretax_income,ebit,total_assets,current_assets,quick_assets,cash,inventory,receivables,operating_cash_flow,total_liability,current_liability,interest_bearing_debt,equity,paid_in_capital,retained_earnings,interest_expense,contingent_liability
+1000000,1100000,900000,150000,100000,120000,110000,140000,160000,2000000,800000,400000,150000,200000,200000,80000,900000,500000,600000,1100000,500000,300000,50000,20000
